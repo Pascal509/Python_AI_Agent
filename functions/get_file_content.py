@@ -1,5 +1,9 @@
 import os
 from .config import MAX_FILE_CHARS
+try:
+    from google.genai import types
+except Exception:
+    types = None
 
 
 def get_file_content(working_directory, file_path):
@@ -39,3 +43,26 @@ def get_file_content(working_directory, file_path):
         return truncated
 
     return content
+
+# Function declaration/schema for use by an LLM
+if types is not None:
+    schema_get_file_content = types.FunctionDeclaration(
+        name="get_file_content",
+        description="Reads the contents of a file in the specified directory.",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "directory": types.Schema(
+                    type=types.Type.STRING,
+                    description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+                ),
+            },
+        ),
+    )
+
+    available_functions = types.Tool(
+        function_declarations=[
+            schema_get_file_content,
+        ]
+    )
+

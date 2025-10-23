@@ -89,3 +89,64 @@ if types is not None:
             schema_get_files_info,
         ]
     )
+    # Additional function schemas for the rest of the utilities
+    schema_get_file_content = types.FunctionDeclaration(
+        name="get_file_content",
+        description="Reads the contents of a file inside the working directory and returns it as a string (may be truncated).",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Path to the file relative to the working directory.",
+                ),
+            },
+        ),
+    )
+
+    schema_run_python_file = types.FunctionDeclaration(
+        name="run_python_file",
+        description="Executes a Python file inside the working directory and returns captured stdout/stderr.",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Path to the Python file relative to the working directory.",
+                ),
+                "args": types.Schema(
+                    type=types.Type.ARRAY,
+                    description="Optional list of string arguments to pass to the script.",
+                    items=types.Schema(type=types.Type.STRING),
+                ),
+            },
+        ),
+    )
+
+    schema_write_file = types.FunctionDeclaration(
+        name="write_file",
+        description="Write or overwrite a file inside the working directory with provided content.",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Path to the file relative to the working directory.",
+                ),
+                "content": types.Schema(
+                    type=types.Type.STRING,
+                    description="The content to write to the file.",
+                ),
+            },
+        ),
+    )
+
+    # Extend available functions to include all schemas
+    available_functions = types.Tool(
+        function_declarations=[
+            schema_get_files_info,
+            schema_get_file_content,
+            schema_run_python_file,
+            schema_write_file,
+        ]
+    )
